@@ -174,23 +174,28 @@ internal object IntroDbSegmentClient {
 }
 
 internal object TheIntroDbSegmentClient {
-    private const val ENDPOINT = "https://api.theintrodb.org/v3/media"
+    private const val ENDPOINT = "https://api.theintrodb.org/v4/media"
 
     fun fetch(
         imdbId: String,
         season: Int,
         episode: Int,
         durationSeconds: Long,
+        mapping: String? = null,
     ): TvSkipSegments {
         val durationMs = durationSeconds * 1_000L
+        val query = mutableListOf(
+            "imdb_id" to imdbId,
+            "season" to season.toString(),
+            "episode" to episode.toString(),
+            "duration_ms" to durationMs.toString(),
+        )
+        if (!mapping.isNullOrEmpty()) {
+            query.add("mapping" to mapping)
+        }
         val body = SkipSegmentHttpClient.get(
             endpoint = ENDPOINT,
-            query = listOf(
-                "imdb_id" to imdbId,
-                "season" to season.toString(),
-                "episode" to episode.toString(),
-                "duration_ms" to durationMs.toString(),
-            ),
+            query = query,
         ) ?: return TvSkipSegments.EMPTY
         return parse(body, durationMs)
     }

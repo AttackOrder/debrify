@@ -350,7 +350,7 @@ class IntroDbSegmentProvider extends _HttpSkipSegmentProvider {
 
 class TheIntroDbSegmentProvider extends _HttpSkipSegmentProvider {
   static final Uri _defaultEndpoint = Uri.parse(
-    'https://api.theintrodb.org/v3/media',
+    'https://api.theintrodb.org/v4/media',
   );
 
   TheIntroDbSegmentProvider({
@@ -371,12 +371,14 @@ class TheIntroDbSegmentProvider extends _HttpSkipSegmentProvider {
     required int season,
     required int episode,
     required Duration duration,
+    String? mapping,
   }) async {
     final response = await get(<String, String>{
       'imdb_id': imdbId,
       'season': '$season',
       'episode': '$episode',
       if (duration > Duration.zero) 'duration_ms': '${duration.inMilliseconds}',
+      if (mapping != null && mapping.isNotEmpty) 'mapping': mapping,
     });
     final decoded = decodeObject(response);
     if (decoded == null) return SkipSegments.empty;
