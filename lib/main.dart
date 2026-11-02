@@ -142,6 +142,7 @@ import 'services/desktop_schedule_service.dart';
 import 'services/update_service.dart';
 import 'services/webdav_sync/webdav_sync_runtime.dart';
 import 'package:debrify/services/storage/device_storage.dart';
+import 'package:debrify/services/storage/preferences_sanitizer.dart';
 import 'package:debrify/services/storage/remote_control_storage.dart';
 
 /// Flutter's default image cache (1000 images / 100 MB) is far too large for a
@@ -273,6 +274,9 @@ Future<void> _mainUnchecked(List<String> launchArguments) async {
   // Apply app-wide Siri Remote thresholds before any focusable UI is mounted.
   // This is inert on Android, iOS, desktop, and web.
   TvosRemoteTuning.install();
+  // Ensure file-backed preferences (Windows/Linux) are uncorrupted before
+  // any service or adoption gate opens SharedPreferences.
+  await PreferencesSanitizer.repairIfCorrupted();
   // Reinstall an interrupted WebDAV adoption's process-wide database barrier
   // before any startup service has a chance to open profile-owned bytes.
   await ProfileDatabaseAdoptionGate.restorePersisted();
