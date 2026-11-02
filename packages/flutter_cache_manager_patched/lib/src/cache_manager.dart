@@ -227,11 +227,11 @@ class CacheManager implements BaseCacheManager {
       eTag: eTag,
     );
 
-    final file = await _config.fileSystem.createFile(cacheObject.relativePath);
-    await _store.whileWriting(cacheObject.relativePath, () async {
+    final file = await _config.fileSystem.createFile(cacheObject!.relativePath);
+    await _store.whileWriting(cacheObject!.relativePath, () async {
       await file.writeAsBytes(fileBytes);
       await _store.putFile(cacheObject!);
-      _store.protectFile(cacheObject.relativePath);
+      _store.protectFile(cacheObject!.relativePath);
     });
     return file;
   }
@@ -265,10 +265,10 @@ class CacheManager implements BaseCacheManager {
       eTag: eTag,
     );
 
-    final file = await _config.fileSystem.createFile(cacheObject.relativePath);
+    final file = await _config.fileSystem.createFile(cacheObject!.relativePath);
 
     // Always copy file
-    await _store.whileWriting(cacheObject.relativePath, () async {
+    await _store.whileWriting(cacheObject!.relativePath, () async {
       final sink = file.openWrite();
       await source
           // this map is need to map UInt8List to List<int>
@@ -276,7 +276,7 @@ class CacheManager implements BaseCacheManager {
           .pipe(sink);
 
       await _store.putFile(cacheObject!);
-      _store.protectFile(cacheObject.relativePath);
+      _store.protectFile(cacheObject!.relativePath);
     });
     return file;
   }
